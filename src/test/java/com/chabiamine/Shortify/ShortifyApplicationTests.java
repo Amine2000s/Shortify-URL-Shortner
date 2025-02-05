@@ -1,4 +1,4 @@
-package com.chabiamine.Shortify.Shortify;
+package com.chabiamine.Shortify;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

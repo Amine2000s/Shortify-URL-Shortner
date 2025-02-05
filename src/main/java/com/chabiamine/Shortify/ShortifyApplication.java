@@ -1,4 +1,4 @@
-package com.chabiamine.Shortify.Shortify;
+package com.chabiamine.Shortify;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
