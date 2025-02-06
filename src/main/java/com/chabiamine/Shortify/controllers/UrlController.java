@@ -6,7 +6,10 @@ import com.chabiamine.Shortify.services.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,5 +44,14 @@ public class UrlController {
     /*
     *
     * */
+
+    @RequestMapping("/deleteUrl")
+    public String deleteUrl(@RequestParam("id")Long id,
+                            ModelMap modelMap){
+        urlService.deleteUrlbyId(id);
+        ArrayList<Url> urlList = (ArrayList<Url>) urlRepository.findAll();
+        modelMap.addAttribute("urlsListJsp",urlList);
+        return "home";
+    }
 
 }

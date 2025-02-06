@@ -43,5 +43,11 @@ public class UrlService {
 
         urlRepository.delete(url);
     }
+    public void deleteUrlbyId(Long id){
+
+        Url url = urlRepository.getReferenceById(id);
+
+        urlRepository.delete(url);
+    }
 
 }

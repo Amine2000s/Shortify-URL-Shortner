@@ -269,6 +269,8 @@
             <table>
                 <thead>
                 <tr>
+                    <th>id</th>
+                    <th>name</th>
                     <th>Short URL</th>
                     <th>Original URL</th>
                     <th>Clicks</th>
@@ -279,6 +281,8 @@
                 <tbody>
                     <c:forEach items="${urlsListJsp}" var="url">
                         <tr>
+                            <td>${url.id}</td>
+                            <td>${url.name}</td>
                             <td>${url.short_URL}</td>
                             <td>${url.original_URL}</td>
                             <td>${url.number_of_visits}</td>
@@ -288,6 +292,7 @@
                                 <i class="fas fa-copy copy-icon" onclick="copyToClipboard('short.ly/abc123')" title="Copy"></i>
                                 <i class="fas fa-ellipsis-h more-icon" title="More Options"></i>
                             </td>
+                            <td><a onclick="return confirm('are you sure to delete this URL ?')" href="deleteUrl?id=${url.id}">Delete</a></td>
 
                         </tr>
                     </c:forEach>
