@@ -5,6 +5,7 @@ import com.chabiamine.Shortify.repositories.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,6 +17,11 @@ public class UrlService {
     public List<Url> getUrls(Long id){
 
         return urlRepository.findAll();
+
+    }
+    public ArrayList<Url> getAllUrls(){
+
+        return (ArrayList<Url>) urlRepository.findAll();
 
     }
 
