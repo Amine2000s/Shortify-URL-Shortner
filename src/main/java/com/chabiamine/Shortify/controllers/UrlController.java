@@ -30,13 +30,8 @@ public class UrlController {
 
     @RequestMapping("/Home")
     public String home(ModelMap modelMap){
-
         /* add ModelMap as an arguments ain order to use it later on
-
-
-
         * */
-
         ArrayList<Url> urlList = (ArrayList<Url>) urlRepository.findAll();
         modelMap.addAttribute("urlsListJsp",urlList);
         return "home" ;
