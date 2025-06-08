@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortify Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --sidebar: #1e1e24;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #1e1e24;
+            --text-light: #6c757d;
+            --border: #e9ecef;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+        }
+
+        [data-theme="dark"] {
+            --sidebar: #121218;
+            --bg: #121218;
+            --card-bg: #1e1e24;
+            --text: #f8f9fa;
+            --text-light: #adb5bd;
+            --border: #3a3a45;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar);
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-header i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.8rem;
+            font-weight: bold;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-email {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 1.5rem;
+            transition: margin-left 0.3s;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text);
+            width: 250px;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .change.positive {
+            color: #2ecc71;
+        }
+
+        .change.negative {
+            color: var(--danger);
+        }
+
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Links Table */
+        .links-card {
+            background-color: var(--card-bg);
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .short-url {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Analytics Chart */
+        .chart-container {
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Quick Shorten Card */
+        .quick-shorten {
+            background-color: var(--card-bg);
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-shorten h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .shorten-form {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .shorten-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: hidden;
+                padding: 1.5rem 0.5rem;
+            }
+
+            .sidebar-header .logo span, 
+            .sidebar-menu a span,
+            .user-info {
+                display: none;
+            }
+
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 0.8rem 0;
+            }
+
+            .sidebar-menu i {
+                margin-right: 0;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .search-bar input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: var(--text);
+                cursor: pointer;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-bar input {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shorten-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="logo">
+                <i class="fas fa-link"></i>
+                <span>Shortify</span>
+            </a>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-link"></i>
+                    <span>My Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-palette"></i>
+                    <span>Branding</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-users"></i>
+                    <span>Team</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-email">john@example.com</div>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="header-actions">
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="notifications">
+                    <button class="action-btn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Links</h3>
+                <div class="value">1,248</div>
+                <div class="change positive">
+                    <i class="fas fa-arrow-up"></i> 12% from last month
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Clicks Today</h3>
+                <div class="value">3,417</div>
+                <div class="change positive">
+                    <i class="fas fa-arrow-up"></i> 8% from yesterday
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Top Country</h3>
+                <div class="value">United States</div>
+                <div class="change">
+                    <i class="fas fa-globe"></i> 42% of traffic
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Avg. CTR</h3>
+                <div class="value">24.6%</div>
+                <div class="change negative">
+                    <i class="fas fa-arrow-down"></i> 3% from last week
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <div class="left-column">
+                <!-- Links Table -->
+                <div class="links-card">
+                    <div class="card-header">
+                        <h2>Recent Links</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> New Link
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Short URL</th>
+                                    <th>Destination</th>
+                                    <th>Clicks</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="short-url">shortify.co/3k9j7h</a>
+                                    </td>
+                                    <td>example.com/long-url-path</td>
+                                    <td>1,248</td>
+                                    <td>2 days ago</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="action-btn" title="Analytics">
+                                                <i class="fas fa-chart-bar"></i>
+                                            </button>
+                                            <button class="action-btn" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn" title="Copy">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="short-url">shortify.co/9j8k2l</a>
+                                    </td>
+                                    <td>example.com/another-long-url</td>
+                                    <td>892</td>
+                                    <td>1 week ago</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="action-btn" title="Analytics">
+                                                <i class="fas fa-chart-bar"></i>
+                                            </button>
+                                            <button class="action-btn" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn" title="Copy">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="short-url">shortify.co/p9k3m2</a>
+                                    </td>
+                                    <td>example.com/product-page</td>
+                                    <td>2,451</td>
+                                    <td>2 weeks ago</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="action-btn" title="Analytics">
+                                                <i class="fas fa-chart-bar"></i>
+                                            </button>
+                                            <button class="action-btn" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn" title="Copy">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="short-url">shortify.co/x8j3k9</a>
+                                    </td>
+                                    <td>example.com/blog-post</td>
+                                    <td>567</td>
+                                    <td>3 weeks ago</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="action-btn" title="Analytics">
+                                                <i class="fas fa-chart-bar"></i>
+                                            </button>
+                                            <button class="action-btn" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn" title="Copy">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Analytics Chart -->
+                <div class="links-card" style="margin-top: 1.5rem;">
+                    <div class="card-header">
+                        <h2>Clicks Overview</h2>
+                        <div>
+                            <select style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border); background-color: var(--card-bg); color: var(--text);">
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option>Last 90 days</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <!-- This would be replaced with an actual chart library like Chart.js -->
+                        <div style="display: flex; align-items: flex-end; height: 100%; gap: 1rem; padding-top: 2rem;">
+                            <div style="flex: 1; background-color: var(--primary); height: 20%; border-radius: 0.3rem;"></div>
+                            <div style="flex: 1; background-color: var(--primary); height: 45%; border-radius: 0.3rem;"></div>
+                            <div style="flex: 1; background-color: var(--primary); height: 70%; border-radius: 0.3rem;"></div>
+                            <div style="flex: 1; background-color: var(--primary); height: 90%; border-radius: 0.3rem;"></div>
+                            <div style="flex: 1; background-color: var(--primary); height: 60%; border-radius: 0.3rem;"></div>
+                            <div style="flex: 1; background-color: var(--primary); height: 30%; border-radius: 0.3rem;"></div>
+                            <div style="flex: 1; background-color: var(--primary); height: 80%; border-radius: 0.3rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <!-- Quick Shorten -->
+                <div class="quick-shorten">
+                    <h2>Quick Shorten</h2>
+                    <form class="shorten-form">
+                        <input type="url" placeholder="Paste your long URL" class="shorten-input" required>
+                        <button type="submit" class="btn btn-primary">Shorten</button>
+                    </form>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="links-card">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <ul class="activity-list">
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">You created a new short link</div>
+                                <div class="activity-time">10 minutes ago</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Your link got 42 new clicks</div>
+                                <div class="activity-time">1 hour ago</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New team member added</div>
+                                <div class="activity-time">3 hours ago</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">You updated your settings</div>
+                                <div class="activity-time">Yesterday</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        let darkMode = localStorage.getItem('darkMode');
+
+        // Check user preference
+        if (darkMode === 'enabled') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        // Toggle function
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('darkMode', 'disabled');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('darkMode', 'enabled');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        });
+
+        // Detect system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !darkMode) {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            localStorage.setItem('darkMode', 'enabled');
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Quick Shorten Form
+        const shortenForm = document.querySelector('.shorten-form');
+        shortenForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = shortenForm.querySelector('input');
+            const url = input.value.trim();
+            
+            if (url) {
+                // Mock shortened URL
+                const shortenedUrl = `shortify.co/${Math.random().toString(36).substring(2, 8)}`;
+                alert(`Your shortened URL: ${shortenedUrl}`);
+                input.value = shortenedUrl;
+                input.select();
+            }
+        });
+
+        // For a real implementation, you would:
+        // 1. Connect to your backend API
+        // 2. Implement proper error handling
+        // 3. Add loading states
+        // 4. Update the UI with the new link
+    </script>
+</body>
+</html>

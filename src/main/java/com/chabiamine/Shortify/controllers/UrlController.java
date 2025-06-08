@@ -34,7 +34,14 @@ public class UrlController {
         * */
         ArrayList<Url> urlList = (ArrayList<Url>) urlRepository.findAll();
         modelMap.addAttribute("urlsListJsp",urlList);
-        return "home" ;
+        return "landingpage" ;
+    }
+
+    @RequestMapping("/Dashboard")
+    public String Dashboard(ModelMap modelMap){
+
+
+        return "dashboard" ;
     }
     /*
     *
@@ -48,5 +55,8 @@ public class UrlController {
         modelMap.addAttribute("urlsListJsp",urlList);
         return "home";
     }
+
+
+
 
 }
