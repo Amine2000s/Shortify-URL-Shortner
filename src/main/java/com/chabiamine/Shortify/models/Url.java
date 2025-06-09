@@ -4,12 +4,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.*;
 
 import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
+@Builder
+@Getter
+@Setter
+
+@AllArgsConstructor
 public class Url {
 
 
@@ -19,7 +24,7 @@ public class Url {
 
     private String name ;
 
-    private long users_ID ;
+    private long user_ID;
 
     private String original_URL ;
 
@@ -34,15 +39,14 @@ public class Url {
 
     public Url(String name, long users_ID, String original_URL, String short_URL , LocalDate date ) {
         this.name = name;
-        this.users_ID = users_ID;
+        this.user_ID = users_ID;
         this.original_URL = original_URL;
         this.short_URL = short_URL;
         this.number_of_visits = 0 ;
         this.date_Created = Date.valueOf(LocalDate.parse(date.toString()));
     }
 
-    public Url() {
-    }
+
 
 
 
@@ -51,7 +55,7 @@ public class Url {
         return "Links{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", users_ID=" + users_ID +
+                ", users_ID=" + user_ID +
                 ", original_URL='" + original_URL + '\'' +
                 ", short_URL='" + short_URL + '\'' +
                 ", number_of_visits=" + number_of_visits +
@@ -70,12 +74,12 @@ public class Url {
         this.name = name;
     }
 
-    public long getUsers_ID() {
-        return users_ID;
+    public long getUser_ID() {
+        return user_ID;
     }
 
-    public void setUsers_ID(long users_ID) {
-        this.users_ID = users_ID;
+    public void setUser_ID(long users_ID) {
+        this.user_ID = users_ID;
     }
 
     public String getOriginal_URL() {
