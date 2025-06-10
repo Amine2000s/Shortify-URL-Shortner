@@ -1,9 +1,6 @@
 package com.chabiamine.Shortify.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
@@ -28,9 +25,10 @@ public class Url {
 
     private String original_URL ;
 
+    @Column(name = "short_URL")
+    private String shortUrl; ;
 
-    private String short_URL ;
-
+    private String shortCode;
 
     private int number_of_visits ;
 
@@ -41,13 +39,15 @@ public class Url {
         this.name = name;
         this.user_ID = users_ID;
         this.original_URL = original_URL;
-        this.short_URL = short_URL;
+        this.shortUrl = short_URL;
+
         this.number_of_visits = 0 ;
         this.date_Created = Date.valueOf(LocalDate.parse(date.toString()));
     }
 
+    public Url() {
 
-
+    }
 
 
     @Override
@@ -57,7 +57,7 @@ public class Url {
                 ", name='" + name + '\'' +
                 ", users_ID=" + user_ID +
                 ", original_URL='" + original_URL + '\'' +
-                ", short_URL='" + short_URL + '\'' +
+                ", short_URL='" + shortUrl + '\'' +
                 ", number_of_visits=" + number_of_visits +
                 '}';
     }
@@ -91,12 +91,18 @@ public class Url {
     }
 
     public String getShort_URL() {
-        return short_URL;
+        return shortUrl;
+    }
+    public String getShortUrl() {
+        return this.shortUrl;
+    }
+    public void setShort_URL(String short_URL) {
+        this.shortUrl = short_URL;
+    }
+    public void setShortUrl(String short_URL) {
+        this.shortUrl = short_URL;
     }
 
-    public void setShort_URL(String short_URL) {
-        this.short_URL = short_URL;
-    }
 
     public int getNumber_of_visits() {
         return number_of_visits;

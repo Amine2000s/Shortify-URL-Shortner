@@ -558,6 +558,16 @@
 
 
 
+
+
+
+
+
+        .left-column {
+            width: 100%;
+        }
+
+
     </style>
 </head>
 <!-- New Link Modal -->
@@ -568,7 +578,7 @@
         <h2>Shorten a New URL</h2>
 
         <!-- New Name Input -->
-        <input type="text" id="newUrlName" class="input-field" placeholder="Enter name (e.g. Product Page)" required>
+        <input type="text" name="newUrlName" id="newUrlName" class="input-field" placeholder="Enter name (e.g. Product Page)" required>
 
         <!-- Existing URL Input -->
         <input type="url" name="originalUrl" id="newUrlInput" class="input-field" placeholder="Enter full URL" required>
@@ -733,8 +743,8 @@
     </div>
 
     <!-- Main Content Grid -->
-    <div class="content-grid">
-        <div class="left-column">
+    <div class="content-grid" style="grid-template-columns: 3fr 1fr;">
+        <div class="left-column" style="width: 100%;">
             <!-- Links Table -->
             <div class="links-card">
                 <div class="card-header">
@@ -756,36 +766,16 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Homepage</td> <!-- New name -->
-                            <td>
-                                <a href="#" class="short-url">shortify.co/3k9j7h</a>
-                            </td>
-                            <td>example.com/long-url-path</td>
-                            <td>1,248</td>
-                            <td>2 days ago</td>
-                            <td>
-                                <div class="actions">
-                                    <button class="action-btn" title="Analytics">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </button>
-                                    <button class="action-btn" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn" title="Copy">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Landing Page</td>
-                            <td>
-                                <a href="#" class="short-url">shortify.co/9j8k2l</a>
-                            </td>
-                            <td>example.com/another-long-url</td>
-                            <td>892</td>
-                            <td>1 week ago</td>
+                        <!-- real values -->
+                        <tr th:each="url : ${urls}">
+                            <td  th:text="${url.name}"></td>
+                            <td><a class="short-url" th:href="${url.short_URL}" th:text="${url.short_URL}"></a></td>
+                            <td class="short-url"  th:text="${url.original_URL}"></td>
+                            <td th:text="${url.number_of_visits}"></td>
+                           <!-- <td th:text="${url.number_of_visits}">0</td>-->
+                            <!--<td th:text="${#dates.format(url.date_Created, 'MMM dd, yyyy')}">Jan 1, 2023</td>-->
+                            <td th:text="${#dates.format(url.date_Created, 'MMM dd, yyyy')}"></td>
+
                             <td>
                                 <div class="actions">
                                     <button class="action-btn" title="Analytics">
@@ -799,51 +789,28 @@
                                     </button>
                                 </div>
                             </td>
+
                         </tr>
-                        <tr>
-                            <td>Product Page</td>
-                            <td>
-                                <a href="#" class="short-url">shortify.co/p9k3m2</a>
-                            </td>
-                            <td>example.com/product-page</td>
-                            <td>2,451</td>
-                            <td>2 weeks ago</td>
-                            <td>
-                                <div class="actions">
-                                    <button class="action-btn" title="Analytics">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </button>
-                                    <button class="action-btn" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn" title="Copy">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Blog Article</td>
-                            <td>
-                                <a href="#" class="short-url">shortify.co/x8j3k9</a>
-                            </td>
-                            <td>example.com/blog-post</td>
-                            <td>567</td>
-                            <td>3 weeks ago</td>
-                            <td>
-                                <div class="actions">
-                                    <button class="action-btn" title="Analytics">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </button>
-                                    <button class="action-btn" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn" title="Copy">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <!------->
+
                         </tbody>
                     </table>
                 </div>
@@ -878,59 +845,31 @@
         </div>
 
         <div class="right-column">
-            <!-- Quick Shorten -->
-            <div class="quick-shorten">
-                <h2>Quick Shorten</h2>
-                <form class="shorten-form">
-                    <input type="url" placeholder="Paste your long URL" class="shorten-input" required>
-                    <button type="submit" class="btn btn-primary">Shorten</button>
-                </form>
-            </div>
-
-            <!-- Recent Activity -->
+            <!-- Top Performing Links -->
             <div class="links-card">
                 <div class="card-header">
-                    <h2>Recent Activity</h2>
+                    <h2>Top Performing Links</h2>
                 </div>
-                <ul class="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-link"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">You created a new short link</div>
-                            <div class="activity-time">10 minutes ago</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">Your link got 42 new clicks</div>
-                            <div class="activity-time">1 hour ago</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">New team member added</div>
-                            <div class="activity-time">3 hours ago</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-cog"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">You updated your settings</div>
-                            <div class="activity-time">Yesterday</div>
-                        </div>
-                    </li>
-                </ul>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Short URL</th>
+                            <th>Clicks</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="url : ${topLinks}">
+                            <td th:text="${url.name}"></td>
+                            <td><a th:href="${url.short_URL}" th:text="${url.short_URL}"></a></td>
+                            <td th:text="${url.number_of_visits}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
     </div>
 </main>
