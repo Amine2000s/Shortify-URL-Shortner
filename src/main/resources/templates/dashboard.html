@@ -590,6 +590,35 @@
             font-size: 14px;
         }
 
+        /****** toast styleing */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #323232;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            z-index: 9999;
+            opacity: 0;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        .toast.success {
+            background-color: #4caf50; /* Green */
+        }
+
+        .toast.error {
+            background-color: #f44336; /* Red */
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
 
     </style>
 </head>
@@ -819,7 +848,8 @@
                                     </button>
                                     <button class="action-btn"
                                             title="Copy"
-                                            onclick="copyToClipboard()"
+                                            th:data-short-url="${url.shortUrl}"
+                                            onclick="copyToClipboard(this)"
                                             style="color: #4cc9f0;">
 
                                         <i class="fas fa-copy"></i>
@@ -1014,12 +1044,15 @@
                 showToast('Failed to copy', 'error');
             });
     }*/
-    function copyToClipboard() {
-        const input = document.getElementById('short-url');
-        input.select();
-        input.setSelectionRange(0, 99999); // mobile
-        document.execCommand("copy");
-        alert("Copied to clipboard!");
+    function copyToClipboard(button) {
+        const url = button.dataset.shortUrl;
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                showToast('URL copied!', 'success');
+            })
+            .catch(() => {
+                showToast('Failed to copy', 'error');
+            });
     }
 
     /* Analytics Modal */
@@ -1061,10 +1094,11 @@
     }
 
     /* Toast Notification */
+
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerText = message;
+        toast.textContent = message;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
