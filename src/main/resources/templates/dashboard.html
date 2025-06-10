@@ -858,7 +858,9 @@
                                     <button class="action-btn"
                                             title="Delete"
                                             style="color: #f94144;"
-                                            onclick="confirmDelete()">
+                                            th:data-url-id="${url.id}"
+                                            th:data-url-name="${url.name}"
+                                            onclick="confirmDelete(this)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
@@ -1054,6 +1056,22 @@
                 showToast('Failed to copy', 'error');
             });
     }
+    /* delete */
+    function confirmDelete(button) {
+        const urlId = button.dataset.urlId;
+        const urlName = button.dataset.urlName;
+        const endpoint = `http://localhost:8085/Shortify/${urlId}`;
+
+        if (confirm(`Delete "${urlName}" permanently?`)) {
+            fetch(endpoint, {
+                method: 'DELETE'
+            }).then(() => {
+                showToast('URL deleted', 'success');
+                button.closest('tr').remove(); // Remove row from table
+            });
+        }
+    }
+
 
     /* Analytics Modal */
     function showAnalytics(urlId) {
@@ -1083,15 +1101,6 @@
     //soon...
 
     /* Delete Confirmation */
-    function confirmDelete(urlId, urlName) {
-        if (confirm(`Delete "${urlName}" permanently?`)) {
-            fetch(`/api/urls/${urlId}`, { method: 'DELETE' })
-                .then(() => {
-                    showToast('URL deleted');
-                    window.location.reload();
-                });
-        }
-    }
 
     /* Toast Notification */
 

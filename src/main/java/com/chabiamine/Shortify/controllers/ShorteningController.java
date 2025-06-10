@@ -45,4 +45,12 @@ public class ShorteningController {
 
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUrl(@PathVariable Long id) {
+        urlRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+
+
 }
