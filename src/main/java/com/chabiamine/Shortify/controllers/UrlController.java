@@ -22,13 +22,19 @@ import java.time.LocalDate;
 @Controller
 public class UrlController {
 
-    @Autowired    private static final String BASE_URL = "http://localhost:8085/Shortify";
+    @Autowired
     UrlService urlService;
+
     @Autowired
     UrlRepository urlRepository;
 
     @Autowired
     HashUtil    hashUtil;
+
+
+    //TODO : this is a newbie wya , mdofiy it !
+    private static final String BASE_URL = "http://localhost:8085/Shortify";
+
 
     @RequestMapping("/CreateUrl")
     public String CreateUrl (@RequestParam("originalUrl") String originalUrl,
@@ -38,9 +44,8 @@ public class UrlController {
 
         try{
 
-            System.out.println(originalUrl);
-           String shortlink =  hashUtil.generateShortCode(originalUrl,"aminou");
-
+            //TODO : username must be the currently signed username
+           String shortlink =  hashUtil.generateShortCode(originalUrl,newUrlName);
 
            Url url = Url.builder().
                    name(newUrlName).
@@ -50,7 +55,6 @@ public class UrlController {
                    date_Created(Date.valueOf(LocalDate.now())).
                    build();
 
-            System.out.println(url);
             urlRepository.save(url);
 
             model.addAttribute("url", url);
@@ -62,36 +66,49 @@ public class UrlController {
         }
     }
 
+
+    //landing page rout
     @RequestMapping("/Home")
     public String home(ModelMap modelMap){
-        /* add ModelMap as an arguments ain order to use it later on
-        * */
+
         ArrayList<Url> urlList = (ArrayList<Url>) urlRepository.findAll();
         modelMap.addAttribute("urlsListJsp",urlList);
 
         return "landingpage" ;
     }
 
+    //dashboard route
     @RequestMapping("/Dashboard")
     public String Dashboard(Model model){
 
+        // TODO : we need to fetch all necessary information before snedoing our dashboard
+        /*
+        * total links
+        * total clicks
+        * avg ctr
+        * country
+        * top performing links
+        * */
         List<Url> userUrls = urlRepository.findAll();
-
         model.addAttribute("urls", userUrls);
 
         return "dashboard" ;
     }
-    /*
-    *
-    * */
 
     @RequestMapping("/deleteUrl")
     public String deleteUrl(@RequestParam("id")Long id,
-                            ModelMap modelMap){
+                            ModelMap modelMap,
+                            HttpServletRequest request){
         urlService.deleteUrlbyId(id);
         ArrayList<Url> urlList = (ArrayList<Url>) urlRepository.findAll();
         modelMap.addAttribute("urlsListJsp",urlList);
-        return "home";
+
+        return "redirect:" + request.getHeader("Referer");
     }
+
+    //TODO: [] modify action
+    //      [] analytics aaction
+    //      [] delete action
+
 
 }

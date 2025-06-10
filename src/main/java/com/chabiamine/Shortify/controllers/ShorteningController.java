@@ -31,36 +31,17 @@ public class ShorteningController {
     @GetMapping("/{shortcode}")
     public ResponseEntity<String> redirectToOriginalUrl(@PathVariable String shortcode) {
 
-        try {
+
             Optional<Url> url = Optional.ofNullable(urlRepository.findByShortCode(shortcode));
-            System.out.println(url);
-            String originalUrl = url.get().getOriginal_URL();
-            return  ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(originalUrl))
-                    .build();
+            if(url.isPresent()) {
+                String originalUrl = url.get().getOriginal_URL();
+                return  ResponseEntity.status(HttpStatus.FOUND)
+                        .location(URI.create(originalUrl))
+                        .build();
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        }catch (Exception e){
-
-            e.printStackTrace();
-
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
-    }
-
-
-    // return the new shortned url
-    @PostMapping("")
-public void shorten(@RequestParam String url) {
-
-    }
-
-
-    @GetMapping("/Hello")
-    public String hello() throws NoSuchAlgorithmException {
-        String url =hashUtil.generateShortCode("www.facebook.com","aminou");
-        System.out.println("Shortify url: " + url);
-        return  "<H1>"+url +"</H1>";
+            }
 
     }
 

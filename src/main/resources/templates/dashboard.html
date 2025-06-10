@@ -567,30 +567,53 @@
             width: 100%;
         }
 
+        /* for buttons */
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+            transform: scale(1.1);
+        }
+
+        .action-btn i {
+            font-size: 14px;
+        }
+
 
     </style>
 </head>
 <!-- New Link Modal -->
 <div id="newLinkModal" class="modal">
     <form th:action="@{/CreateUrl}" method="post">
-    <div class="modal-content">
-        <button class="btn-close" onclick="closeModal('newLinkModal')">&times;</button>
-        <h2>Shorten a New URL</h2>
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeModal('newLinkModal')">&times;</button>
+            <h2>Shorten a New URL</h2>
 
-        <!-- New Name Input -->
-        <input type="text" name="newUrlName" id="newUrlName" class="input-field" placeholder="Enter name (e.g. Product Page)" required>
+            <!-- New Name Input -->
+            <input type="text" name="newUrlName" id="newUrlName" class="input-field" placeholder="Enter name (e.g. Product Page)" required>
 
-        <!-- Existing URL Input -->
-        <input type="url" name="originalUrl" id="newUrlInput" class="input-field" placeholder="Enter full URL" required>
+            <!-- Existing URL Input -->
+            <input type="url" name="originalUrl" id="newUrlInput" class="input-field" placeholder="Enter full URL" required>
 
-        <div class="btn-group" style="margin-top: 1.5rem; justify-content: center; flex-direction: column; gap: 1rem;">
-            <button id="shortenBtn" class="btn btn-primary" onclick="submitUrl()" type="submit">
-                <span id="shortenText">Shorten</span>
-                <span id="shortenLoading" style="display: none;">Loading...</span>
-            </button>
-            <button class="btn btn-primary" onclick="closeModal('newLinkModal')">Cancel</button>
+            <div class="btn-group" style="margin-top: 1.5rem; justify-content: center; flex-direction: column; gap: 1rem;">
+                <button id="shortenBtn" class="btn btn-primary" onclick="submitUrl()" type="submit">
+                    <span id="shortenText">Shorten</span>
+                    <span id="shortenLoading" style="display: none;">Loading...</span>
+                </button>
+                <button class="btn btn-primary" onclick="closeModal('newLinkModal')">Cancel</button>
+            </div>
         </div>
-    </div>
     </form>
 </div>
 
@@ -769,23 +792,44 @@
                         <!-- real values -->
                         <tr th:each="url : ${urls}">
                             <td  th:text="${url.name}"></td>
-                            <td><a class="short-url" th:href="${url.short_URL}" th:text="${url.short_URL}"></a></td>
+                            <td><a class="short-url" id="short-url" th:href="${url.short_URL}" target="_blank" th:text="${url.short_URL}"></a></td>
                             <td class="short-url"  th:text="${url.original_URL}"></td>
                             <td th:text="${url.number_of_visits}"></td>
-                           <!-- <td th:text="${url.number_of_visits}">0</td>-->
+                            <!-- <td th:text="${url.number_of_visits}">0</td>-->
                             <!--<td th:text="${#dates.format(url.date_Created, 'MMM dd, yyyy')}">Jan 1, 2023</td>-->
                             <td th:text="${#dates.format(url.date_Created, 'MMM dd, yyyy')}"></td>
 
                             <td>
                                 <div class="actions">
-                                    <button class="action-btn" title="Analytics">
+                                    <button class="action-btn"
+                                            title="Analytics"
+                                            style="color: #4361ee;"
+                                            onclick="showAnalytics()">
+
                                         <i class="fas fa-chart-bar"></i>
+
                                     </button>
-                                    <button class="action-btn" title="Edit">
+                                    <button class="action-btn"
+                                            title="Edit"
+                                            style="color: #f8961e;"
+                                            onclick="openEditModal()">
+
                                         <i class="fas fa-edit"></i>
+
                                     </button>
-                                    <button class="action-btn" title="Copy">
+                                    <button class="action-btn"
+                                            title="Copy"
+                                            onclick="copyToClipboard()"
+                                            style="color: #4cc9f0;">
+
                                         <i class="fas fa-copy"></i>
+                                    </button>
+
+                                    <button class="action-btn"
+                                            title="Delete"
+                                            style="color: #f94144;"
+                                            onclick="confirmDelete()">
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
                             </td>
@@ -876,9 +920,6 @@
 
 <script>
 
-
-
-
     // Dark Mode Toggle
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
@@ -918,28 +959,13 @@
         sidebar.classList.toggle('active');
     });
 
-    // Quick Shorten Form
-    const shortenForm = document.querySelector('.shorten-form');
-    shortenForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = shortenForm.querySelector('input');
-        const url = input.value.trim();
 
-        if (url) {
-            // Mock shortened URL
-            const shortenedUrl = `shortify.co/${Math.random().toString(36).substring(2, 8)}`;
-            alert(`Your shortened URL: ${shortenedUrl}`);
-            input.value = shortenedUrl;
-            input.select();
-        }
-    });
 
     // For a real implementation, you would:
     // 1. Connect to your backend API
     // 2. Implement proper error handling
     // 3. Add loading states
     // 4. Update the UI with the new link
-
 
 
     //modal
@@ -970,65 +996,77 @@
         closeModal('newLinkModal');
         openModal('successModal');
 
-        //jdid khouya
-        function submitUrl() {
-            const nameInput = document.getElementById('newUrlName');
-            const urlInput = document.getElementById('newUrlInput');
-            const shortenBtn = document.getElementById('shortenBtn');
-            const loading = document.getElementById('shortenLoading');
-            const text = document.getElementById('shortenText');
-
-            const name = nameInput.value.trim();
-            const url = urlInput.value.trim();
-
-            if (!url.startsWith('http')) {
-                closeModal('newLinkModal');
-                openModal('errorModal');
-                return;
-            }
-
-            // Show loading
-            loading.style.display = 'inline';
-            text.style.display = 'none';
-            shortenBtn.disabled = true;
-
-            fetch('/links/shorten', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ url, name })
+    }
+    /*function copyToClipboard() {
+        const input = document.getElementById('shortUrlOutput');
+        input.select();
+        input.setSelectionRange(0, 99999); // mobile
+        document.execCommand("copy");
+        alert("Copied to clipboard!");
+    }*/
+    /* Clipboard Function */
+    /*function copyToClipboard(button) {
+        navigator.clipboard.writeText(button.dataset.url)
+            .then(() => {
+                showToast('Copied to clipboard!');
             })
-                .then(res => {
-                    if (!res.ok) throw new Error("Failed");
-                    return res.json();
-                })
-                .then(data => {
-                    document.getElementById('shortUrlOutput').value = data.shortUrl;
-                    closeModal('newLinkModal');
-                    openModal('successModal');
-                })
-                .catch(() => {
-                    closeModal('newLinkModal');
-                    openModal('errorModal');
-                })
-                .finally(() => {
-                    loading.style.display = 'none';
-                    text.style.display = 'inline';
-                    shortenBtn.disabled = false;
-                    nameInput.value = '';
-                    urlInput.value = '';
+            .catch(err => {
+                showToast('Failed to copy', 'error');
+            });
+    }*/
+    function copyToClipboard() {
+        const input = document.getElementById('short-url');
+        input.select();
+        input.setSelectionRange(0, 99999); // mobile
+        document.execCommand("copy");
+        alert("Copied to clipboard!");
+    }
+
+    /* Analytics Modal */
+    function showAnalytics(urlId) {
+        fetch(`/analytics/${urlId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('analyticsModalTitle').innerText = data.urlName;
+                // Render chart with data.stats
+                openModal('analyticsModal');
+            });
+    }
+
+    /* Edit Modal */
+    function openEditModal(urlId) {
+        fetch(`/api/urls/${urlId}`)
+            .then(response => response.json())
+            .then(url => {
+                document.getElementById('editUrlId').value = url.id;
+                document.getElementById('editName').value = url.name;
+                document.getElementById('editOriginalUrl').value = url.originalUrl;
+                document.getElementById('editExpiration').value = url.expirationDate;
+                openModal('editUrlModal');
+            });
+    }
+
+    /* QR Code Generation */
+    //soon...
+
+    /* Delete Confirmation */
+    function confirmDelete(urlId, urlName) {
+        if (confirm(`Delete "${urlName}" permanently?`)) {
+            fetch(`/api/urls/${urlId}`, { method: 'DELETE' })
+                .then(() => {
+                    showToast('URL deleted');
+                    window.location.reload();
                 });
         }
+    }
 
-//copy to cliboard
-
-        function copyToClipboard() {
-            const input = document.getElementById('shortUrlOutput');
-            input.select();
-            input.setSelectionRange(0, 99999); // mobile
-            document.execCommand("copy");
-            alert("Copied to clipboard!");
-        }
-
+    /* Toast Notification */
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     }
 
 </script>
