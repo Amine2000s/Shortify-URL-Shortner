@@ -1,6 +1,7 @@
 package com.chabiamine.Shortify.controllers;
 
 
+import com.chabiamine.Shortify.dto.LinkAnalyticsDto;
 import com.chabiamine.Shortify.models.Url;
 import com.chabiamine.Shortify.models.UrlVisit;
 import com.chabiamine.Shortify.repositories.UrlRepository;
@@ -94,6 +95,19 @@ public class ShorteningController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{id}/analytics")
+    @ResponseBody
+    public ResponseEntity<LinkAnalyticsDto> getAnalytics(@PathVariable Long id) {
+        // Dummy data for now (replace with real service later)
+        LinkAnalyticsDto dto = new LinkAnalyticsDto();
+        dto.totalClicks = 432;
+        dto.firstClick = "2024-05-01";
+        dto.lastClick = "2025-06-08";
+        dto.topCountries = Map.of("United States", 168, "France", 122, "Germany", 78);
+        dto.deviceTypes = Map.of("Mobile", 68, "Desktop", 28, "Bot", 4);
+        dto.referrers = Map.of("google.com", 52, "twitter.com", 33, "(direct)", 15);
 
+        return ResponseEntity.ok(dto);
+    }
 
 }

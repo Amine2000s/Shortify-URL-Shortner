@@ -710,6 +710,105 @@
         }
 
 
+/* analytics modal */
+
+        /* Scoped styles for the analytics modal only */
+
+        #analyticsModal .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow-y: auto;
+        }
+
+        #analyticsModal h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        #analyticsModal h4 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.6rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.3rem;
+        }
+
+        #analyticsModal ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        #analyticsModal ul li {
+            padding: 0.35rem 0;
+            color: var(--text);
+        }
+
+        #analyticsModal ul li strong {
+            color: var(--primary);
+        }
+
+        #analyticsModal .analytics-stat-card {
+            flex: 1;
+            min-width: 160px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        #analyticsModal .analytics-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        #analyticsModal .analytics-stat-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        #analyticsModal .analytics-stat-card h3 {
+            font-size: 1.6rem;
+            margin: 0.6rem 0 0;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        #analyticsModal .btn-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        #analyticsModal .btn-close:hover {
+            color: var(--danger);
+        }
+
+        #analyticsModal .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
 
 
 
@@ -789,6 +888,72 @@
                 <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
             </div>
         </form>
+    </div>
+</div>
+
+
+
+<!-- Analytics Modal -->
+<div id="analyticsModal" class="modal">
+    <div class="modal-content">
+        <button class="btn-close" onclick="closeModal('analyticsModal')">&times;</button>
+
+        <h2>📊 Link Analytics</h2>
+
+        <!-- Summary Stats -->
+        <div class="analytics-summary" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+            <div class="analytics-stat-card">
+                <p>Total Clicks</p>
+                <h3>432</h3>
+            </div>
+            <div class="analytics-stat-card">
+                <p>First Click</p>
+                <h3>May 01, 2024</h3>
+            </div>
+            <div class="analytics-stat-card">
+                <p>Last Click</p>
+                <h3>June 08, 2025</h3>
+            </div>
+        </div>
+
+        <!-- Horizontal Sections -->
+        <div class="analytics-sections" style="display: flex; flex-wrap: wrap; gap: 2rem;">
+
+            <!-- Top Countries -->
+            <div class="analytics-section" style="flex: 1; min-width: 250px;">
+                <h4>🌍 Top Countries</h4>
+                <ul>
+                    <li>🇺🇸 United States — <strong>168</strong></li>
+                    <li>🇫🇷 France — <strong>122</strong></li>
+                    <li>🇩🇪 Germany — <strong>78</strong></li>
+                </ul>
+            </div>
+
+            <!-- Device Types -->
+            <div class="analytics-section" style="flex: 1; min-width: 250px;">
+                <h4>📱 Device Types</h4>
+                <ul>
+                    <li>Mobile — <strong>68%</strong></li>
+                    <li>Desktop — <strong>28%</strong></li>
+                    <li>Bot — <strong>4%</strong></li>
+                </ul>
+            </div>
+
+            <!-- Referrers -->
+            <div class="analytics-section" style="flex: 1; min-width: 250px;">
+                <h4>🔗 Referrers</h4>
+                <ul>
+                    <li>google.com — <strong>52%</strong></li>
+                    <li>twitter.com — <strong>33%</strong></li>
+                    <li>(direct) — <strong>15%</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Close Button -->
+        <div class="btn-group" style="margin-top: 2rem; justify-content: center;">
+            <button class="btn btn-primary" onclick="closeModal('analyticsModal')">Close</button>
+        </div>
     </div>
 </div>
 
@@ -948,7 +1113,8 @@
                                     <button class="action-btn"
                                             title="Analytics"
                                             style="color: #4361ee;"
-                                            onclick="showAnalytics()">
+                                            th:data-id="${url.id}"
+                                            onclick="loadAnalytics(this)">
 
                                         <i class="fas fa-chart-bar"></i>
 
@@ -1191,15 +1357,59 @@
 
 
     /* Analytics Modal */
-    function showAnalytics(urlId) {
-        fetch(`/analytics/${urlId}`)
-            .then(response => response.json())
+
+    function loadAnalytics(button) {
+        const urlId = button.getAttribute('data-id');
+        const endpoint = `http://localhost:8085/Shortify/${urlId}/analytics`;
+
+        fetch(endpoint)
+            .then(res => res.json())
             .then(data => {
-                document.getElementById('analyticsModalTitle').innerText = data.urlName;
-                // Render chart with data.stats
+                // Fill summary
+                document.querySelector("#analyticsModal .analytics-stat-card:nth-child(1) h3").innerText = data.totalClicks;
+                document.querySelector("#analyticsModal .analytics-stat-card:nth-child(2) h3").innerText = formatDate(data.firstClick);
+                document.querySelector("#analyticsModal .analytics-stat-card:nth-child(3) h3").innerText = formatDate(data.lastClick);
+
+                // Fill countries
+                const countryList = document.querySelector("#analyticsModal .analytics-section:nth-child(1) ul");
+                countryList.innerHTML = "";
+                for (let country in data.topCountries) {
+                    countryList.innerHTML += `<li>${country} — <strong>${data.topCountries[country]}</strong></li>`;
+                }
+
+                // Fill devices
+                const deviceList = document.querySelector("#analyticsModal .analytics-section:nth-child(2) ul");
+                deviceList.innerHTML = "";
+                for (let device in data.deviceTypes) {
+                    deviceList.innerHTML += `<li>${device} — <strong>${data.deviceTypes[device]}%</strong></li>`;
+                }
+
+                // Fill referrers
+                const refList = document.querySelector("#analyticsModal .analytics-section:nth-child(3) ul");
+                refList.innerHTML = "";
+                for (let ref in data.referrers) {
+                    refList.innerHTML += `<li>${ref} — <strong>${data.referrers[ref]}%</strong></li>`;
+                }
+
                 openModal('analyticsModal');
+            })
+            .catch(err => {
+                alert("Failed to load analytics 😢");
+                console.error(err);
             });
     }
+
+    // Optional: Format date nicely
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+
+
+
+
+
 
     /* Edit Modal */
     // Open modal with current URL data
