@@ -620,6 +620,99 @@
             100% { opacity: 0; transform: translateY(20px); }
         }
 
+        /* edit modal */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(30, 30, 36, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-modal .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text);
+            padding: 2rem;
+            border-radius: 0.8rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .edit-modal h2 {
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .edit-modal .form-group {
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+
+        .edit-modal .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+        }
+
+        .edit-modal .input-field,
+        .edit-modal .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        .edit-modal .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .edit-modal .btn-close,
+        .edit-modal .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+        }
+
+        .edit-modal .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .edit-modal .btn-primary {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .edit-modal .btn-secondary {
+            background-color: #ccc;
+            color: #000;
+        }
+
+
+
+
+
     </style>
 </head>
 <!-- New Link Modal -->
@@ -665,7 +758,6 @@
 
 
 <!-- Error Modal -->
-<!-- Error Modal -->
 <div id="errorModal" class="modal">
     <div class="modal-content">
         <button class="btn-close" onclick="closeModal('errorModal')">&times;</button>
@@ -674,6 +766,29 @@
         <div class="btn-group" style="margin-top: 1.5rem; justify-content: center;">
             <button class="btn btn-primary" onclick="closeModal('errorModal')">Back to Dashboard</button>
         </div>
+    </div>
+</div>
+
+<!-- edit modal -->
+<div id="editModal" class="edit-modal">
+    <div class="modal-content">
+        <button class="btn-close" onclick="closeEditModal()">&times;</button>
+        <h2>Edit URL</h2>
+        <form id="editUrlForm">
+            <input type="hidden" id="editUrlId">
+
+            <div class="form-group">
+                <label for="editUrlName">URL Name</label>
+                <input type="text" id="editUrlName" class="form-control" required>
+            </div>
+
+
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -840,8 +955,10 @@
                                     </button>
                                     <button class="action-btn"
                                             title="Edit"
+                                            th:data-id="${url.id}"
+                                            th:data-name="${url.name}"
                                             style="color: #f8961e;"
-                                            onclick="openEditModal()">
+                                            onclick="openEditModal(this)">
 
                                         <i class="fas fa-edit"></i>
 
@@ -1085,17 +1202,67 @@
     }
 
     /* Edit Modal */
-    function openEditModal(urlId) {
-        fetch(`/api/urls/${urlId}`)
-            .then(response => response.json())
-            .then(url => {
-                document.getElementById('editUrlId').value = url.id;
-                document.getElementById('editName').value = url.name;
-                document.getElementById('editOriginalUrl').value = url.originalUrl;
-                document.getElementById('editExpiration').value = url.expirationDate;
-                openModal('editUrlModal');
-            });
+    // Open modal with current URL data
+    function openEditModal(buttonElement) {
+        const urlId = buttonElement.getAttribute('data-id');
+        const urlName = buttonElement.getAttribute('data-name');
+
+        document.getElementById('editUrlId').value = urlId;
+        document.getElementById('editUrlName').value = urlName;
+
+        document.getElementById('editModal').style.display = 'flex';
     }
+
+    // Close modal
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Handle form submission
+    document.getElementById('editUrlForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const urlId = document.getElementById('editUrlId').value;
+        const newName = document.getElementById('editUrlName').value;
+
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Saving...';
+        submitBtn.disabled = true;
+        const endpoint = `http://localhost:8085/Shortify/${urlId}`;
+
+        // Send update request
+        fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newName })
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Update failed');
+                closeEditModal();
+                showToast('URL name updated successfully!');
+                // Refresh the data or update the UI
+                window.location.reload();
+            })
+            .catch(error => {
+                showToast('Failed to update URL name', 'error');
+                console.error(error);
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+    });
+
+    // Close modal when clicking outside content
+    window.addEventListener('click', function(event) {
+        if (event.target === document.getElementById('editModal')) {
+            closeEditModal();
+        }
+    });
 
     /* QR Code Generation */
     //soon...

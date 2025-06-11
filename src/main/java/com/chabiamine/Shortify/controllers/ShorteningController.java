@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -48,6 +49,16 @@ public class ShorteningController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUrl(@PathVariable Long id) {
         urlRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUrl(@PathVariable Long id,@RequestBody Map<String, String> body) {
+        System.out.println("hello");
+        Optional<Url> url  = urlRepository.findById(id);
+        String newName = body.get("name");
+        url.get().setName(newName);
+        urlRepository.save(url.get());
         return ResponseEntity.ok().build();
     }
 
