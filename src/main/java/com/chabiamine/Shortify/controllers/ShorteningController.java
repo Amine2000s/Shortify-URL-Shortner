@@ -2,15 +2,21 @@ package com.chabiamine.Shortify.controllers;
 
 
 import com.chabiamine.Shortify.models.Url;
+import com.chabiamine.Shortify.models.UrlVisit;
 import com.chabiamine.Shortify.repositories.UrlRepository;
+import com.chabiamine.Shortify.repositories.visitRepository;
+import com.chabiamine.Shortify.services.UrlService;
 import com.chabiamine.Shortify.utils.HashUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,17 +30,44 @@ public class ShorteningController {
     @Autowired
     UrlRepository urlRepository;
 
-    public ShorteningController(HashUtil hashUtil, UrlRepository urlRepository) {
+    @Autowired
+    visitRepository visitRepository;
+
+    @Autowired
+    UrlService urlService;
+
+    public ShorteningController(HashUtil hashUtil,
+                                UrlRepository urlRepository,
+                                visitRepository visitRepository,
+                                UrlService urlService) {
         this.hashUtil = hashUtil;
         this.urlRepository = urlRepository;
+        this.visitRepository = visitRepository;
+        this.urlService = urlService;
     }
 
     @GetMapping("/{shortcode}")
-    public ResponseEntity<String> redirectToOriginalUrl(@PathVariable String shortcode) {
+    public ResponseEntity<String> redirectToOriginalUrl(@PathVariable String shortcode,
+                                                        HttpServletRequest request) throws IOException {
+
+
 
 
             Optional<Url> url = Optional.ofNullable(urlRepository.findByShortCode(shortcode));
             if(url.isPresent()) {
+
+                UrlVisit visit = new UrlVisit();
+                visit.setIpAdress(urlService.getClientIp(request)); // for later on when we deploy
+                visit.setUserAgent(request.getHeader("User-Agent"));
+                visit.setReferer(request.getHeader("Referer"));
+                visit.setTimestamp(LocalDateTime.now());
+                visit.setUrl(url.get());
+                visit.setCountry(urlService.GetCountry(request.getRemoteAddr()));
+                visitRepository.save(visit);
+
+                url.get().setNumber_of_visits(url.get().getNumber_of_visits() + 1);
+                urlRepository.save(url.get());
+
                 String originalUrl = url.get().getOriginal_URL();
                 return  ResponseEntity.status(HttpStatus.FOUND)
                         .location(URI.create(originalUrl))
@@ -54,7 +87,6 @@ public class ShorteningController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUrl(@PathVariable Long id,@RequestBody Map<String, String> body) {
-        System.out.println("hello");
         Optional<Url> url  = urlRepository.findById(id);
         String newName = body.get("name");
         url.get().setName(newName);

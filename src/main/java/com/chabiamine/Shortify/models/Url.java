@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Builder
@@ -33,6 +34,11 @@ public class Url {
     private int number_of_visits ;
 
     private java.sql.Date date_Created ;
+
+
+    @OneToMany
+    private List<UrlVisit> visits ;
+
 
 
     public Url(String name, long users_ID, String original_URL, String short_URL , LocalDate date ) {

@@ -47,6 +47,7 @@ public class UrlController {
             //TODO : username must be the currently signed username
            String shortlink =  hashUtil.generateShortCode(originalUrl,newUrlName);
 
+
            Url url = Url.builder().
                    name(newUrlName).
                    original_URL(originalUrl).
