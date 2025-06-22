@@ -1,5 +1,6 @@
 package com.chabiamine.Shortify.models;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class UrlVisit {
 
     private String referer;
 
+    @Nullable
     private String country;
 
     private LocalDateTime timestamp ;

@@ -22,8 +22,6 @@ public class Url {
 
     private String name ;
 
-    private long user_ID;
-
     private String original_URL ;
 
     @Column(name = "short_URL")
@@ -39,11 +37,12 @@ public class Url {
     @OneToMany
     private List<UrlVisit> visits ;
 
+    @ManyToOne
+    Users user ;
 
 
-    public Url(String name, long users_ID, String original_URL, String short_URL , LocalDate date ) {
+    public Url(String name, String original_URL, String short_URL , LocalDate date ) {
         this.name = name;
-        this.user_ID = users_ID;
         this.original_URL = original_URL;
         this.shortUrl = short_URL;
 
@@ -61,7 +60,6 @@ public class Url {
         return "Links{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", users_ID=" + user_ID +
                 ", original_URL='" + original_URL + '\'' +
                 ", short_URL='" + shortUrl + '\'' +
                 ", number_of_visits=" + number_of_visits +
@@ -80,13 +78,6 @@ public class Url {
         this.name = name;
     }
 
-    public long getUser_ID() {
-        return user_ID;
-    }
-
-    public void setUser_ID(long users_ID) {
-        this.user_ID = users_ID;
-    }
 
     public String getOriginal_URL() {
         return original_URL;

@@ -19,7 +19,7 @@ class ShortifyApplicationTests {
 	@Test
 	public void addURL(){
 
-		Url url = new Url("twitter",1L,"www.twitter.com/100063966673456","www.Shortify.com/abg", LocalDate.now());
+		Url url = new Url("twitter","www.twitter.com/100063966673456","www.Shortify.com/abg", LocalDate.now());
 
 		urlRepository.save(url);
 	}

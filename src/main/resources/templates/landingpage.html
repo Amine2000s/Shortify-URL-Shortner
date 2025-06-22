@@ -522,8 +522,154 @@
                 grid-template-columns: 1fr;
             }
         }
+
+
+
+        /*auth*/
+
+        #loginModal .modal-content,
+        #signupModal .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text);
+            padding: 2rem 2.5rem;
+            border-radius: 1.25rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            text-align: center;
+        }
+
+        #loginModal h2,
+        #signupModal h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Input fields */
+        #loginModal .input-field,
+        #signupModal .input-field {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.6rem;
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease;
+        }
+
+        #loginModal .input-field:focus,
+        #signupModal .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.15);
+        }
+
+        /* Buttons */
+        #loginModal .btn-group button,
+        #signupModal .btn-group button {
+            font-size: 1rem;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            font-weight: 500;
+        }
+
+        #loginModal .btn-primary,
+        #signupModal .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            transition: background 0.2s ease;
+        }
+
+        #loginModal .btn-primary:hover,
+        #signupModal .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        #loginModal .btn-outline,
+        #signupModal .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        #loginModal .btn-outline:hover,
+        #signupModal .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Close button */
+        #loginModal .btn-close,
+        #signupModal .btn-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        #loginModal .btn-close:hover,
+        #signupModal .btn-close:hover {
+            color: var(--danger);
+        }
+
+
+
+
+
+
+
+
     </style>
 </head>
+
+<style> .modal { display: none; /* default hidden */ position: fixed; z-index: 999; top: 0; left: 0; height: 100dvh; width: 100%; background: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; } .modal-content { background-color: var(--card-bg); color: var(--text); padding: 2rem; border-radius: 1.25rem; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); position: relative; } </style>
+
+
+
+
+<div id="loginModal" class="modal" style="display: none;">
+    <form th:action="@{/login}" method="post">
+        <div class="modal-content">
+            <button class="btn-close" type="button" onclick="closeModal('loginModal')">&times;</button>
+            <h2>Log In</h2>
+            <input type="text" name="username" class="input-field" placeholder="Username" required />
+            <input type="password" name="password" class="input-field" placeholder="Password" required />
+            <div class="btn-group" style="margin-top: 1.5rem; justify-content: center; flex-direction: column; gap: 1rem;">
+                <button class="btn btn-primary" type="submit">Log In</button>
+                <button class="btn btn-outline" type="button" onclick="closeModal('loginModal')">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Signup Modal -->
+<div id="signupModal" class="modal" style="display: none;">
+    <form th:action="@{/signup}" method="post" th:object="${user}">
+        <div class="modal-content">
+            <button class="btn-close" type="button" onclick="closeModal('signupModal')">&times;</button>
+            <h2>Sign Up</h2>
+            <input type="text" th:field="*{username}" class="input-field" placeholder="Username" required />
+            <input type="password" th:field="*{password}" class="input-field" placeholder="Password" required />
+            <div class="btn-group" style="margin-top: 1.5rem; justify-content: center; flex-direction: column; gap: 1rem;">
+                <button class="btn btn-primary" type="submit">Create Account</button>
+                <button class="btn btn-outline" type="button" onclick="closeModal('signupModal')">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
 <body>
     <!-- Header -->
     <header>
@@ -542,16 +688,25 @@
                 </div>
                 
                 <div class="nav-cta">
-                    <button class="btn btn-outline">Login</button>
-                    <button class="btn btn-primary">Sign Up</button>
+                   <!-- -->
+                   <!-- <div class="hero-btns">
+                        <form th:action="@{/login}" method="get">
+                            <button class="btn btn-outline" type="submit">Login</button>
+                        </form>
+                        <div class="hero-btns">
+                            <form th:action="@{/signup}" method="get">
+                                <button class="btn btn-primary" type="submit">Sign Up</button>
+                            </form>
                     <button class="theme-toggle" id="themeToggle">
                         <i class="fas fa-moon"></i>
+                    </button>-->
+                    <button class="btn btn-outline" onclick="openModal('loginModal')">Login</button>
+                    <button class="btn btn-primary" onclick="openModal('signupModal')" >Sign Up</button>
+                    <button class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
                     </button>
                 </div>
-                
-                <button class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
+
             </nav>
         </div>
     </header>
@@ -818,6 +973,10 @@
         </div>
     </footer>
 
+
+
+
+
     <script>
         // Dark Mode Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -897,6 +1056,19 @@
                 input.select();
             }
         });
+
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
     </script>
+
+
+
 </body>
 </html>

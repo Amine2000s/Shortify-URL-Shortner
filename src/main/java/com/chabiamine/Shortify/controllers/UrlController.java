@@ -1,7 +1,9 @@
 package com.chabiamine.Shortify.controllers;
 
 import com.chabiamine.Shortify.models.Url;
+import com.chabiamine.Shortify.models.Users;
 import com.chabiamine.Shortify.repositories.UrlRepository;
+import com.chabiamine.Shortify.repositories.UsersRepository;
 import com.chabiamine.Shortify.services.UrlService;
 import com.chabiamine.Shortify.utils.HashUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,8 @@ public class UrlController {
     @Autowired
     HashUtil    hashUtil;
 
+    @Autowired
+    UsersRepository usersRepository ;
 
     //TODO : this is a newbie wya , mdofiy it !
     private static final String BASE_URL = "http://localhost:8085/Shortify";
@@ -40,19 +45,22 @@ public class UrlController {
     public String CreateUrl (@RequestParam("originalUrl") String originalUrl,
                               @RequestParam("newUrlName")String newUrlName,
                              HttpServletRequest request,
+                              Principal principal,
                               Model model) {
 
         try{
 
             //TODO : username must be the currently signed username
            String shortlink =  hashUtil.generateShortCode(originalUrl,newUrlName);
-
+            String username = principal.getName();
+            Users user = usersRepository.findByUsername(username).orElseThrow();
 
            Url url = Url.builder().
                    name(newUrlName).
                    original_URL(originalUrl).
                    shortUrl(BASE_URL+"/"+shortlink).
                    shortCode(shortlink).
+                   user(user).
                    date_Created(Date.valueOf(LocalDate.now())).
                    build();
 
@@ -70,17 +78,20 @@ public class UrlController {
 
     //landing page rout
     @RequestMapping("/Home")
-    public String home(ModelMap modelMap){
+    public String home(Model model,
+                       Principal principal){
+        if (principal != null) return "redirect:/Dashboard";
 
+        model.addAttribute("user", new Users());
         ArrayList<Url> urlList = (ArrayList<Url>) urlRepository.findAll();
-        modelMap.addAttribute("urlsListJsp",urlList);
+        //modelMap.addAttribute("urlsListJsp",urlList);
 
         return "landingpage" ;
     }
 
     //dashboard route
     @RequestMapping("/Dashboard")
-    public String Dashboard(Model model){
+    public String Dashboard(Principal principal , Model model){
 
         // TODO : we need to fetch all necessary information before snedoing our dashboard
         /*
@@ -90,8 +101,11 @@ public class UrlController {
         * country
         * top performing links
         * */
-        List<Url> userUrls = urlRepository.findAll();
-        model.addAttribute("urls", userUrls);
+        //List<Url> userUrls = urlRepository.findAll();
+        String username = principal.getName(); // from Spring Security
+        List<Url> urls = urlRepository.findAllByUserUsername(username);
+        model.addAttribute("username", username);
+        model.addAttribute("urls", urls);
 
         return "dashboard" ;
     }

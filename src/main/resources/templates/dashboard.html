@@ -809,13 +809,59 @@
             gap: 1rem;
             justify-content: center;
         }
+        /* logout toast */
+        .toast-success {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.6rem;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 999;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeOut 5s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+
+        /* logout button  styling */
+        .btn-logout {
+            padding: 0.6rem 1.2rem;
+            background-color: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
 
 
 
     </style>
 </head>
+
+
+
+
+
+
+
 <!-- New Link Modal -->
-<div id="newLinkModal" class="modal">
+<div id="newLinkModal" class="modal" >
     <form th:action="@{/CreateUrl}" method="post">
         <div class="modal-content">
             <button class="btn-close" onclick="closeModal('newLinkModal')">&times;</button>
@@ -837,7 +883,6 @@
         </div>
     </form>
 </div>
-
 
 
 <!-- Success Modal -->
@@ -959,6 +1004,8 @@
 
 
 <body>
+
+<!-- Sidebar -->
 <!-- Sidebar -->
 <aside class="sidebar">
     <div class="sidebar-header">
@@ -1009,15 +1056,20 @@
 
     <div class="sidebar-footer">
         <div class="user-profile">
-            <div class="user-avatar">JD</div>
+            <div class="user-avatar">[[${#strings.substring(username, 0, 2)?.toUpperCase()}]]</div>
             <div class="user-info">
-                <div class="user-name">John Doe</div>
-                <div class="user-email">john@example.com</div>
+                <div class="user-name">[[${username}]]</div>
+                <div class="user-email">—</div>
             </div>
-            <i class="fas fa-chevron-down"></i>
+            <form th:action="@{/logout}" method="post">
+                <button class="btn btn-outline btn-logout" type="submit" style="margin-left: auto;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </form>
         </div>
     </div>
 </aside>
+
 
 <!-- Main Content -->
 <main class="main-content">

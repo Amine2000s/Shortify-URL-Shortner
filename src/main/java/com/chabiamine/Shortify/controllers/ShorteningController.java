@@ -6,6 +6,7 @@ import com.chabiamine.Shortify.models.Url;
 import com.chabiamine.Shortify.models.UrlVisit;
 import com.chabiamine.Shortify.repositories.UrlRepository;
 import com.chabiamine.Shortify.repositories.visitRepository;
+import com.chabiamine.Shortify.services.LinkAnalyticsService;
 import com.chabiamine.Shortify.services.UrlService;
 import com.chabiamine.Shortify.utils.HashUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,14 +38,19 @@ public class ShorteningController {
     @Autowired
     UrlService urlService;
 
+    @Autowired
+    LinkAnalyticsService linkAnalyticsService;
+
     public ShorteningController(HashUtil hashUtil,
                                 UrlRepository urlRepository,
                                 visitRepository visitRepository,
-                                UrlService urlService) {
+                                UrlService urlService,
+                                LinkAnalyticsService linkAnalyticsDservice) {
         this.hashUtil = hashUtil;
         this.urlRepository = urlRepository;
         this.visitRepository = visitRepository;
         this.urlService = urlService;
+        this.linkAnalyticsService = linkAnalyticsDservice;
     }
 
     @GetMapping("/{shortcode}")
@@ -63,7 +69,8 @@ public class ShorteningController {
                 visit.setReferer(request.getHeader("Referer"));
                 visit.setTimestamp(LocalDateTime.now());
                 visit.setUrl(url.get());
-                visit.setCountry(urlService.GetCountry(request.getRemoteAddr()));
+                //System.out.println(urlService.GetCountry(request.getRemoteAddr()));
+                visit.setCountry("Algeria");
                 visitRepository.save(visit);
 
                 url.get().setNumber_of_visits(url.get().getNumber_of_visits() + 1);
@@ -99,15 +106,20 @@ public class ShorteningController {
     @ResponseBody
     public ResponseEntity<LinkAnalyticsDto> getAnalytics(@PathVariable Long id) {
         // Dummy data for now (replace with real service later)
-        LinkAnalyticsDto dto = new LinkAnalyticsDto();
-        dto.totalClicks = 432;
+        //LinkAnalyticsDto dto = new LinkAnalyticsDto();
+       /* dto.totalClicks = 432;
         dto.firstClick = "2024-05-01";
         dto.lastClick = "2025-06-08";
         dto.topCountries = Map.of("United States", 168, "France", 122, "Germany", 78);
         dto.deviceTypes = Map.of("Mobile", 68, "Desktop", 28, "Bot", 4);
         dto.referrers = Map.of("google.com", 52, "twitter.com", 33, "(direct)", 15);
-
+*/
+        LinkAnalyticsDto dto = linkAnalyticsService.getAnalyticsForLink(id);
         return ResponseEntity.ok(dto);
     }
+
+
+
+
 
 }
