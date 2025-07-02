@@ -132,6 +132,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>Shortify</finalName>
+		<defaultGoal>clean</defaultGoal>
 	</build>
 
 </project>

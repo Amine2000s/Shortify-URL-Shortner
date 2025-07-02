@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://avnadmin:AVNS_BtHsuJTq7hFqkgNamAZ@mysql-shortify-9925-chabiaminesifeddine-2e4f.c.aivencloud.com:13786/defaultdb?ssl-mode=REQUIRED
+    username: avnadmin
+    password: AVNS_BtHsuJTq7hFqkgNamAZ
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
