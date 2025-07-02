@@ -41,13 +41,13 @@ This is an actively developed project. The MVP is functional, and new capabiliti
 
 ---
 
-## 🔐 Authentication (Planned)
+## 🔐 Authentication (:white_check_mark:Done  )
 
 Authentication will be added using **session-based login** via Spring Security, instead of stateless JWT. This aligns better with Thymeleaf and server-side rendered workflows.
 
 ---
 
-## 🐳 Docker (Planned)
+## 🐳 Docker (🔧 on Going...)
 
 The app will be Dockerized to support deployment via containers and integrated into a CI/CD pipeline. MySQL will run in a separate container.
 
@@ -112,8 +112,8 @@ Then open: http://localhost:8085/Dashboard or http://localhost:8085/Home
 
 | Feature                   | Status     | Notes                                    |
 | ------------------------- | ---------- | ---------------------------------------- |
-| Authentication (Sessions) | 🟡 Planned | Simpler and better for Thymeleaf apps    |
-| Docker support            | 🟡 Planned | MySQL + app containerization             |
+| Authentication (Sessions) | :white_check_mark:Done | Simpler and better for Thymeleaf apps    |
+| Docker support            | :wrench: On going | MySQL + app containerization             |
 | Analytics panel w/ charts | 🟡 Planned | Charts.js or similar with device filters |
 | Redis caching             | ⚪ Optional | For performance at scale                 |
 | Image uploads (preview)   | ⚪ Idea     | Optional for visualizing content         |
