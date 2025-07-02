@@ -6,7 +6,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-alpine
-COPY --from=build /target/*.jar demo.jar
+COPY --from=build /target/*.jar Shortify.jar
 COPY src /home/app/src
 EXPOSE 8085
-ENTRYPOINT ["java","-jar","/home/app/target/Shortify.jar"]
+ENTRYPOINT ["java","-jar","Shortify.jar"]
