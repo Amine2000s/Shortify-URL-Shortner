@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -37,8 +38,11 @@ public class UrlController {
     @Autowired
     UsersRepository usersRepository ;
 
-    //TODO : this is a newbie wya , mdofiy it !
-    private static final String BASE_URL = "http://localhost:8085/Shortify";
+    //TODO : this is a newbie way , modify it !
+    //private static final String BASE_URL = "http://localhost:8085/Shortify";
+
+
+
 
 
     @RequestMapping("/CreateUrl")
@@ -54,11 +58,12 @@ public class UrlController {
            String shortlink =  hashUtil.generateShortCode(originalUrl,newUrlName);
             String username = principal.getName();
             Users user = usersRepository.findByUsername(username).orElseThrow();
+            String BASE_URL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
            Url url = Url.builder().
                    name(newUrlName).
                    original_URL(originalUrl).
-                   shortUrl(BASE_URL+"/"+shortlink).
+                   shortUrl(BASE_URL+"/Shortify/"+shortlink).
                    shortCode(shortlink).
                    user(user).
                    date_Created(Date.valueOf(LocalDate.now())).
@@ -121,9 +126,9 @@ public class UrlController {
         return "redirect:" + request.getHeader("Referer");
     }
 
-    //TODO: [] modify action
-    //      [] analytics aaction
-    //      [] delete action
+    //TODO: [X] modify action
+    //      [X] analytics action
+    //      [X] delete action
 
 
 }

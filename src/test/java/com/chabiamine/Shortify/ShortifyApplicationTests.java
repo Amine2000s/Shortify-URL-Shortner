@@ -14,21 +14,6 @@ import java.util.Date;
 class ShortifyApplicationTests {
 
 
-	@Autowired
-	UrlRepository urlRepository ;
-	@Test
-	public void addURL(){
 
-		Url url = new Url("twitter","www.twitter.com/100063966673456","www.Shortify.com/abg", LocalDate.now());
-
-		urlRepository.save(url);
-	}
-	@Test
-	public void getAllUrls(){
-
-		ArrayList<Url> urls = (ArrayList<Url>) urlRepository.findAll();
-
-		for(Url arr : urls) System.out.println(arr.toString());
-	}
 
 }

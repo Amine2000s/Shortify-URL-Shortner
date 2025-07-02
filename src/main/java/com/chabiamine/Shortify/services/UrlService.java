@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -77,7 +79,7 @@ public class UrlService {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String response = in.lines().collect(Collectors.joining());
         JSONObject json = new JSONObject(response);
-        System.out.println(json.getString("country"));
+        //System.out.println(json.getString("country"));
         return json.getString("country");
     }
 
@@ -88,5 +90,7 @@ public class UrlService {
         }
         return request.getRemoteAddr();
     }
+
+
 
 }
