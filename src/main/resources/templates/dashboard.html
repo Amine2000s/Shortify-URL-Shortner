@@ -1398,7 +1398,7 @@ spring boot get current request base url
     function confirmDelete(button) {
         const urlId = button.dataset.urlId;
         const urlName = button.dataset.urlName;
-        const endpoint = `http://localhost:8085/Shortify/${urlId}`;
+        const endpoint = `https://shortify-url-shortner-584s.onrender.com/Shortify/${urlId}`;
 
         if (confirm(`Delete "${urlName}" permanently?`)) {
             fetch(endpoint, {
@@ -1415,7 +1415,7 @@ spring boot get current request base url
 
     function loadAnalytics(button) {
         const urlId = button.getAttribute('data-id');
-        const endpoint = `http://localhost:8085/Shortify/${urlId}/analytics`;
+        const endpoint = `https://shortify-url-shortner-584s.onrender.com/Shortify/${urlId}/analytics`;
 
         fetch(endpoint)
             .then(res => res.json())
@@ -1495,7 +1495,7 @@ spring boot get current request base url
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Saving...';
         submitBtn.disabled = true;
-        const endpoint = `http://localhost:8085/Shortify/${urlId}`;
+        const endpoint = `https://shortify-url-shortner-584s.onrender.com/Shortify/${urlId}`;
 
         // Send update request
         fetch(endpoint, {
