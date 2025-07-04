@@ -78,6 +78,12 @@ public class ShorteningController {
                 urlRepository.save(url.get());
 
                 String originalUrl = url.get().getOriginal_URL();
+                System.out.println("###################################################################");
+                System.out.println("###################################################################");
+                System.out.println("original url detected : " + originalUrl);
+                System.out.println("###################################################################");
+                System.out.println("###################################################################");
+
                 return  ResponseEntity.status(HttpStatus.FOUND)
                         .location(URI.create(originalUrl))
                         .build();
@@ -105,7 +111,6 @@ public class ShorteningController {
 
 
 
-    @CrossOrigin("")
     @GetMapping("/{id}/analytics")
     @ResponseBody
     public ResponseEntity<LinkAnalyticsDto> getAnalytics(@PathVariable Long id) {

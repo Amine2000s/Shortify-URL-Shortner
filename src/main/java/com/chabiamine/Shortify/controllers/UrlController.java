@@ -59,8 +59,11 @@ public class UrlController {
             String username = principal.getName();
             Users user = usersRepository.findByUsername(username).orElseThrow();
             String BASE_URL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            System.out.println("###################################################################");
+            System.out.println(BASE_URL);
+            System.out.println("###################################################################");
 
-           Url url = Url.builder().
+            Url url = Url.builder().
                    name(newUrlName).
                    original_URL(originalUrl).
                    shortUrl(BASE_URL+"/Shortify/"+shortlink).
@@ -72,6 +75,12 @@ public class UrlController {
             urlRepository.save(url);
 
             model.addAttribute("url", url);
+            System.out.println("###################################################################");
+
+            System.out.println(url.getShort_URL());
+            System.out.println(url.getShortUrl());
+            System.out.println("###################################################################");
+
 
             return "redirect:" + request.getHeader("Referer");
 
