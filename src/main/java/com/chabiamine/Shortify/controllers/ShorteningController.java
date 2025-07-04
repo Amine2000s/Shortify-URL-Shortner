@@ -24,6 +24,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/Shortify")
+@CrossOrigin(origins = "*") //
 public class ShorteningController {
 
     @Autowired
@@ -102,6 +103,9 @@ public class ShorteningController {
         return ResponseEntity.ok().build();
     }
 
+
+
+    @CrossOrigin("")
     @GetMapping("/{id}/analytics")
     @ResponseBody
     public ResponseEntity<LinkAnalyticsDto> getAnalytics(@PathVariable Long id) {
