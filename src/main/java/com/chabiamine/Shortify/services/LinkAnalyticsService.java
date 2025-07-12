@@ -21,6 +21,7 @@ public class LinkAnalyticsService {
     }
 
     public LinkAnalyticsDto getAnalyticsForLink(Long urlId) {
+
         LinkAnalyticsDto dto = new LinkAnalyticsDto();
 
         dto.totalClicks = (int) visitRepo.countByUrlId(urlId);
@@ -34,6 +35,9 @@ public class LinkAnalyticsService {
 
         // You could also fetch geo IP here (optional)
         dto.topCountries = Map.of("MockCountry", 100); // Placeholder
+
+
+
 
         return dto;
     }
