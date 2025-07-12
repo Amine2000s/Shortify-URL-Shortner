@@ -55,7 +55,7 @@ public class LinkAnalyticsService {
         for (Object[] row : results) {
             String agent = ((String) row[0]).toLowerCase();
             String type = agent.contains("mobile") ? "Mobile" :
-                    agent.contains("windows") || agent.contains("mac") ? "Desktop" : "Bot";
+                    agent.contains("windows") || agent.contains("mac")  ? "Desktop" : "Bot";
             map.put(type, map.getOrDefault(type, 0) + ((Long) row[1]).intValue());
         }
         return map;

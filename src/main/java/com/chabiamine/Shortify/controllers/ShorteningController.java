@@ -131,7 +131,7 @@ public class ShorteningController {
         System.out.println(dto);
         System.out.println("######################################################################");
         System.out.println("######################################################################");
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok().body(dto);
     }
 
 
