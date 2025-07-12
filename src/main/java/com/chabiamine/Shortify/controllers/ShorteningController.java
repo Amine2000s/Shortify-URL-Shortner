@@ -124,6 +124,13 @@ public class ShorteningController {
         dto.referrers = Map.of("google.com", 52, "twitter.com", 33, "(direct)", 15);
 */
         LinkAnalyticsDto dto = linkAnalyticsService.getAnalyticsForLink(id);
+
+        System.out.println("######################################################################");
+        System.out.println("######################################################################");
+        System.out.println("we are trying to retrive anaylitcs and this is what we found ");
+        System.out.println(dto);
+        System.out.println("######################################################################");
+        System.out.println("######################################################################");
         return ResponseEntity.ok(dto);
     }
 
