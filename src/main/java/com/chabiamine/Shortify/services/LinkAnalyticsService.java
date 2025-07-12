@@ -47,19 +47,39 @@ public class LinkAnalyticsService {
         for (Object[] row : results) {
             map.put((String) row[0], ((Long) row[1]).intValue());
         }
+        map.entrySet().removeIf(e -> e.getKey() == null);
         return map;
     }
 
     private Map<String, Integer> parseUserAgents(List<Object[]> results) {
         Map<String, Integer> map = new LinkedHashMap<>();
+
         for (Object[] row : results) {
+            if (row[0] == null || row[1] == null) {
+                continue; // Skip rows with null values
+            }
+
             String agent = ((String) row[0]).toLowerCase();
-            String type = agent.contains("mobile") ? "Mobile" :
-                    agent.contains("windows") || agent.contains("mac")  ? "Desktop" : "Bot";
-            map.put(type, map.getOrDefault(type, 0) + ((Long) row[1]).intValue());
+            int count = ((Long) row[1]).intValue();
+
+            String type;
+            if (agent.contains("mobile")) {
+                type = "Mobile";
+            } else if (agent.contains("windows") || agent.contains("mac") || agent.contains("linux")) {
+                type = "Desktop";
+            } else {
+                type = "Bot";
+            }
+
+            map.merge(type, count, Integer::sum);
         }
+
+        // Optional: Safety net (can remove if above logic is airtight)
+        map.entrySet().removeIf(e -> e.getKey() == null);
+
         return map;
     }
+
 
 
 }

@@ -1420,6 +1420,7 @@ spring boot get current request base url
         fetch(endpoint)
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 // Fill summary
                 document.querySelector("#analyticsModal .analytics-stat-card:nth-child(1) h3").innerText = data.totalClicks;
                 document.querySelector("#analyticsModal .analytics-stat-card:nth-child(2) h3").innerText = formatDate(data.firstClick);
