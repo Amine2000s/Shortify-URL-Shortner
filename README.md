@@ -113,8 +113,8 @@ Then open: http://localhost:8085/Dashboard or http://localhost:8085/Home
 | Feature                   | Status     | Notes                                    |
 | ------------------------- | ---------- | ---------------------------------------- |
 | Authentication (Sessions) | :white_check_mark:Done | Simpler and better for Thymeleaf apps    |
-| Docker support            | :wrench: On going | MySQL + app containerization             |
-| Analytics panel w/ charts | 🟡 Planned | Charts.js or similar with device filters |
+| Docker support            | :white_check_mark:Done | MySQL + app containerization             |
+| Analytics panel w/ charts | :wrench: On going | Charts.js or similar with device filters |
 | Redis caching             | ⚪ Optional | For performance at scale                 |
 | Image uploads (preview)   | ⚪ Idea     | Optional for visualizing content         |
 | Pagination                | 🟡 Planned | For large visit logs                     |
